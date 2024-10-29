@@ -51,8 +51,6 @@ public class AuthenticationService {
         userDto.setUsername(user.getUsername());
         userDto.setRole(user.getRole().getName());
 
-
-
         userDto.setJwt(jwt);
 
         return userDto;
@@ -122,7 +120,9 @@ public class AuthenticationService {
     public void logout(HttpServletRequest request) {
 
         String jwt = jwtService.extractJwtFromRequest(request);
-        if (jwt == null || !StringUtils.hasText(jwt)) return;
+        if (jwt == null || !StringUtils.hasText(jwt)) {
+            return;
+        }
 
         Optional<JwtToken> token = jwtRepository.findByToken(jwt);
 

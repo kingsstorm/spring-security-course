@@ -21,12 +21,13 @@ public class AuthenticationController {
 
     @PreAuthorize("permitAll")
     @GetMapping("/validate-token")
-    public ResponseEntity<Boolean> validate(@RequestParam String jwt ){
+    public ResponseEntity<Boolean> validate(@RequestParam String jwt) {
 
         boolean inTokenValid = authenticationService.validateToken(jwt);
         return ResponseEntity.ok(inTokenValid);
     }
 
+//    @CrossOrigin
     @PreAuthorize("permitAll")
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
