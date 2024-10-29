@@ -1,5 +1,6 @@
 package com.cursos.api.spring_security_course.persistence.entity.security;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,7 +21,8 @@ public class Role {
 
     private String name;
 
-    @OneToMany(mappedBy = "role")
+    @JsonIgnore
+    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
     private List<GrantedPermission> permissions;
 
 

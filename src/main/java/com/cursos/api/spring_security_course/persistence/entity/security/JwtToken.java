@@ -5,22 +5,27 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Entity
-@Setter
 @Getter
+@Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class GrantedPermission {
+public class JwtToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private long id;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @Column(length = 2048)
+    private String token;
+
+    private Date expiration;
+
+    private boolean isValid;
 
     @ManyToOne
-    @JoinColumn(name = "operation_id")
-    private Operation operation;
+    @JoinColumn(name = "user_id")
+    private User user;
 }
