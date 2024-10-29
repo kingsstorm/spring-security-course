@@ -2,9 +2,11 @@ package com.cursos.api.spring_security_course.service.impl;
 
 import com.cursos.api.spring_security_course.dto.SaveUser;
 import com.cursos.api.spring_security_course.exception.InvalidPasswordException;
-import com.cursos.api.spring_security_course.persistence.entity.User;
-import com.cursos.api.spring_security_course.persistence.repository.UserRepository;
-import com.cursos.api.spring_security_course.persistence.util.Role;
+import com.cursos.api.spring_security_course.exception.ObjectNotFoundException;
+import com.cursos.api.spring_security_course.persistence.entity.security.Role;
+import com.cursos.api.spring_security_course.persistence.entity.security.User;
+import com.cursos.api.spring_security_course.persistence.repository.security.UserRepository;
+import com.cursos.api.spring_security_course.service.RoleService;
 import com.cursos.api.spring_security_course.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +23,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleService roleService;
+
     @Override
     public User registerOneCustomer(SaveUser newUser) {
 
@@ -32,7 +38,10 @@ public class UserServiceImpl implements UserService {
 
         user.setName(newUser.getName());
         user.setUsername(newUser.getUsername());
-        user.setRole(Role.CUSTOMER);
+
+        Role defaultRole = roleService.findDefaulRole()
+                        .orElseThrow(() -> new ObjectNotFoundException("Default Role not found!"));
+        user.setRole(defaultRole);
 
         return userRepository.save(user);
 

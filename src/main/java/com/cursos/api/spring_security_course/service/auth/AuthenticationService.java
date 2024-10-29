@@ -4,7 +4,7 @@ import com.cursos.api.spring_security_course.dto.RegisteredUser;
 import com.cursos.api.spring_security_course.dto.SaveUser;
 import com.cursos.api.spring_security_course.dto.auth.AuthenticationRequest;
 import com.cursos.api.spring_security_course.dto.auth.AuthenticationResponse;
-import com.cursos.api.spring_security_course.persistence.entity.User;
+import com.cursos.api.spring_security_course.persistence.entity.security.User;
 import com.cursos.api.spring_security_course.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class AuthenticationService {
         userDto.setId(user.getId());
         userDto.setName(user.getName());
         userDto.setUsername(user.getUsername());
-        userDto.setRole(user.getRole().name());
+        userDto.setRole(user.getRole().getName());
 
         String jwt= jwtService.generateToken(user, generateExtraClaims(user));
 
@@ -53,7 +53,7 @@ public class AuthenticationService {
         Map<String, Object> extraClaims = new HashMap<>();
 
         extraClaims.put("name", user.getName());
-        extraClaims.put("role", user.getRole().name());
+        extraClaims.put("role", user.getRole().getName());
         extraClaims.put("authorities", user.getAuthorities());
 
         return extraClaims;

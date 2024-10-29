@@ -1,6 +1,5 @@
-package com.cursos.api.spring_security_course.persistence.entity;
+package com.cursos.api.spring_security_course.persistence.entity.security;
 
-import com.cursos.api.spring_security_course.persistence.util.Role;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -8,7 +7,6 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsChecker;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,19 +29,18 @@ public class User implements UserDetails {
     private String name;
     private String password;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne()
+    @JoinColumn(name = "role_id")
     private Role role;
-
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         if (role == null) return null;
-        if(role.getRolePermissions() == null) return null;
+        if(role.getPermissions() == null) return null;
 
-        List<SimpleGrantedAuthority> auth =  role.getRolePermissions().stream()
-                .map(each -> each.name())
+        List<SimpleGrantedAuthority> authorities =  role.getPermissions().stream()
+                .map(each -> each.getOperation().getName())
                 .map(each -> new SimpleGrantedAuthority(each))
 //                .map(each -> {
 //            String permission = each.name();
@@ -51,8 +48,8 @@ public class User implements UserDetails {
 //        })
                 .collect(Collectors.toList());
 
-        auth.add(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
-        return auth;
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.role.getName()));
+        return authorities;
     }
 
     @Override
@@ -83,5 +80,37 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

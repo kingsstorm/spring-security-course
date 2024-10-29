@@ -2,12 +2,12 @@ package com.cursos.api.spring_security_course.controller;
 
 import com.cursos.api.spring_security_course.dto.auth.AuthenticationResponse;
 import com.cursos.api.spring_security_course.dto.auth.AuthenticationRequest;
-import com.cursos.api.spring_security_course.persistence.entity.User;
+import com.cursos.api.spring_security_course.persistence.entity.security.User;
 import com.cursos.api.spring_security_course.service.auth.AuthenticationService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +17,7 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationService authenticationService;
 
+    @PreAuthorize("permitAll")
     @GetMapping("/validate-token")
     public ResponseEntity<Boolean> validate(@RequestParam String jwt ){
 
@@ -24,6 +25,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(inTokenValid);
     }
 
+    @PreAuthorize("permitAll")
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody @Valid AuthenticationRequest authenticationRequest){
@@ -33,6 +35,7 @@ public class AuthenticationController {
 
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'ASSISTANT','CUSTOMER')")
     @GetMapping("/profile")
     public ResponseEntity<User> findMyProfile(){
         User user = authenticationService.findLoggedInUser();
