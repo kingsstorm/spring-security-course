@@ -6,6 +6,7 @@ import com.cursos.api.spring_security_course.persistence.util.RolePermissionEnum
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authorization.AuthorizationManager;
@@ -66,8 +67,9 @@ public class HttpSecurityConfig {
         return filterChain;
     }
 
+    @Profile({"local","dev"})
     @Bean
-    UrlBasedCorsConfigurationSource corsConfigurationSource() {
+    UrlBasedCorsConfigurationSource DefaultCorsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("https://www.google.com", "http://localhost:5500"));
         configuration.setAllowedMethods(Arrays.asList("*"));
@@ -78,7 +80,18 @@ public class HttpSecurityConfig {
         return source;
     }
 
-
+    @Profile("docker")
+    @Bean
+    UrlBasedCorsConfigurationSource DockerCorsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://client"));
+        configuration.setAllowedMethods(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     /**
      * Ejemplo con authorities
